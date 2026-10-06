@@ -1,4 +1,3 @@
-# main.py — FastAPI Layer for KHL SupplyHub
 import os
 from typing import Optional
 from fastapi import FastAPI, HTTPException, status
@@ -27,10 +26,14 @@ def serialize_doc(doc):
         doc["customer_id"] = str(doc["customer_id"])
     if "supplier_id" in doc and isinstance(doc["supplier_id"], ObjectId):
         doc["supplier_id"] = str(doc["supplier_id"])
-    if "order_details" in doc:
+    if "order_details" in doc and isinstance(doc["order_details"], list):
         for item in doc["order_details"]:
             if "product_id" in item and isinstance(item["product_id"], ObjectId):
                 item["product_id"] = str(item["product_id"])
+    # Convert nested transaction_id BSON ObjectId if present
+    if "transaction" in doc and isinstance(doc["transaction"], dict):
+        if "transaction_id" in doc["transaction"] and isinstance(doc["transaction"]["transaction_id"], ObjectId):
+            doc["transaction"]["transaction_id"] = str(doc["transaction"]["transaction_id"])
     return doc
 
 
