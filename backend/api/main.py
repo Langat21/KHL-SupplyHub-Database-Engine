@@ -1,5 +1,6 @@
 # main.py — FastAPI Layer for KHL SupplyHub
 import os
+import certifi
 from typing import Optional
 from fastapi import FastAPI, HTTPException, status
 from pymongo import MongoClient
@@ -15,6 +16,14 @@ app = FastAPI(
 # Database Connection with explicit timeout
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+
+# Use certifi's root certificates for SSL verification
+client = MongoClient(
+    MONGO_URI,
+    tlsCAFile=certifi.where(),
+    serverSelectionTimeoutMS=5000
+)
+
 db = client["khl_supplyhub"]
 
 
